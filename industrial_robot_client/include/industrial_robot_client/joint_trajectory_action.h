@@ -39,7 +39,7 @@
 #include <control_msgs/FollowJointTrajectoryAction.h>
 #include <control_msgs/FollowJointTrajectoryFeedback.h>
 #include <industrial_msgs/RobotStatus.h>
-
+#include <std_msgs/Bool.h>
 namespace industrial_robot_client
 {
 namespace joint_trajectory_action
@@ -142,6 +142,10 @@ private:
    * status (see industrial_msgs::RobotStatus) if it exists.
    */
   double goal_threshold_;
+
+  ros::Subscriber async_failure_sub_;
+
+  void onAsyncFailure(const std_msgs::Bool::ConstPtr &msg);
 
   /**
    * \brief The joint names associated with the robot the action is

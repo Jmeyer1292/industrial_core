@@ -63,9 +63,22 @@ JointTrajectoryAction::JointTrajectoryAction() :
   sub_trajectory_state_ = node_.subscribe("feedback_states", 1, &JointTrajectoryAction::controllerStateCB, this);
   sub_robot_status_ = node_.subscribe("robot_status", 1, &JointTrajectoryAction::robotStatusCB, this);
 
+  async_failure_sub_ = node_.subscribe("async_failure", 0, &JointTrajectoryAction::onAsyncFailure, this);
+
+
   watchdog_timer_ = node_.createTimer(ros::Duration(WATCHDOG_PERIOD_), &JointTrajectoryAction::watchdog, this, true);
   action_server_.start();
 }
+
+void JointTrajectoryAction::onAsyncFailure(const std_msgs::Bool::ConstPtr &msg)
+{
+  if (msg->data)
+  {
+    ROS_ERROR("Async failure");
+    abortGoal();
+  }
+}
+
 
 JointTrajectoryAction::~JointTrajectoryAction()
 {
